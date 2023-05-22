@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Renderer Project",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Renderer/Debug/Renderer",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Renderer",
+            "environment": [],
+            "console": "internalConsole",
+            "preLaunchTask": "Debug"
+        },
+        {
+            "name": "Release Renderer Project",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Renderer/Release/Renderer",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Renderer",
+            "environment": [],
+            "console": "internalConsole",
+            "preLaunchTask": "Release"
+        }
+    ]
+}
