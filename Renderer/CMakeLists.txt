@@ -6,6 +6,10 @@ include(FetchContent)
 
 add_executable(Renderer
     src/main.cpp
+    src/Core/Window/Window.cpp
+    src/Core/Application/Application.cpp
+    src/Core/Vulkan/VulkanInstance.cpp
+    src/Core/Vulkan/VulkanApplication.cpp
 )
 
 # Set compiler warnings as errors
