@@ -8,8 +8,8 @@
 // Okay this sucks
 #undef CreateWindow
 
-Core::Application::Application()
-    : m_Window(std::make_unique<Window>(600, 400, "Renderer")),
+Core::Application::Application(const Window::WindowData& windowData)
+    : m_Window(std::make_unique<Window>(windowData)),
     m_VulkanApplication(std::make_unique<Vulkan::VulkanApplication>())
 {
     m_Window->CreateWindow();

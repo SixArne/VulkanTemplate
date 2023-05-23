@@ -11,6 +11,9 @@ add_executable(Renderer
     src/Core/Vulkan/VulkanInstance.cpp
     src/Core/Vulkan/VulkanApplication.cpp
     src/Core/Vulkan/VulkanValidation.cpp
+    src/Core/Vulkan/VulkanPhysicalDevice.cpp
+
+    src/Core/Logger/Logger.cpp
     # src/Core/Errors/VulkanErrors.cpp
 )
 
@@ -27,9 +30,11 @@ endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode enabled. Optimizations disabled.")
     target_compile_definitions(Renderer PUBLIC DEBUG=1)
+    target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "Release mode enabled. Optimizations enabled.")
     target_compile_definitions(Renderer PUBLIC DEBUG=0)
+    target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
 endif()
 
 # GLM

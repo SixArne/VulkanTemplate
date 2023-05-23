@@ -10,12 +10,26 @@ namespace Core
     class Window
     {
     public:
+        struct WindowData
+        {
+            uint16_t width      {800};
+            uint16_t height     {600};
+            std::string title   {"Vulkan window"};
+        };
+
+        struct Dimensions
+        {
+            uint16_t width;
+            uint16_t height;
+        };
+
         Window();
-        Window(uint16_t width = 800, uint16_t height = 600, const std::string& title = "Vulkan window");
+        Window(const WindowData& windowData);
         ~Window();
 
         void CreateWindow();
         bool IsRunning() const { return !glfwWindowShouldClose(m_pWindow); };
+        Dimensions GetDimensions() const { return { m_Width, m_Height }; };
         void Update(float deltaTime);
 
     private:

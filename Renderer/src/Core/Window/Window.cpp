@@ -5,8 +5,8 @@ Core::Window::Window()
 {
 }
 
-Core::Window::Window(uint16_t width, uint16_t height, const std::string& title)
-    : m_Width(width), m_Height(height), m_Title(title)
+Core::Window::Window(const WindowData& windowData)
+    : m_Width(windowData.width), m_Height(windowData.height), m_Title(windowData.title)
 {
 }
 

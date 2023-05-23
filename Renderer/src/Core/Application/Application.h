@@ -12,7 +12,7 @@ namespace Core
     class Application
     {
     public:
-        Application();
+        Application(const Window::WindowData& windowData);
         ~Application() = default;
 
         void Start();

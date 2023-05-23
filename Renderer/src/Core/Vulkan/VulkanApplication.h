@@ -5,6 +5,7 @@ namespace Core::Vulkan
 {
     class VulkanInstance;
     class VulkanValidation;
+    class VulkanPhysicalDevice;
 
     class VulkanApplication
     {
@@ -23,6 +24,7 @@ namespace Core::Vulkan
     private:
         VulkanInstance* m_VulkanInstance;
         VulkanValidation* m_VulkanValidation;
+        VulkanPhysicalDevice* m_VulkanPhysicalDevice;
     };
 }
 

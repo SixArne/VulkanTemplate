@@ -1,7 +1,6 @@
 #ifndef VULKAN_RENDERER_VALIDATION_H
 #define VULKAN_RENDERER_VALIDATION_H
 
-#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vector>
 
@@ -32,7 +31,7 @@ namespace Core::Vulkan
 
         VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
         void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
-    
+
         bool m_EnableValidationLayers{false};
         VkInstance m_VulkanInstance{};
         VkDebugUtilsMessengerEXT m_DebugMessenger{};
