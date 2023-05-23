@@ -3,6 +3,7 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#include <vector>
 
 namespace Core::Vulkan
 {
@@ -13,9 +14,12 @@ namespace Core::Vulkan
         ~VulkanInstance();
 
         void CreateInstance();
+        const VkInstance GetInstance() const { return m_Instance; };
 
     private:
-        VkInstance m_Instance;
+        std::vector<const char*> GetRequiredExtensions();
+        bool m_EnableValidationLayers{false};
+        VkInstance m_Instance{};
     };
 }
 

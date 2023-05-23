@@ -10,6 +10,8 @@ add_executable(Renderer
     src/Core/Application/Application.cpp
     src/Core/Vulkan/VulkanInstance.cpp
     src/Core/Vulkan/VulkanApplication.cpp
+    src/Core/Vulkan/VulkanValidation.cpp
+    # src/Core/Errors/VulkanErrors.cpp
 )
 
 # Set compiler warnings as errors

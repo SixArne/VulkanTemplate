@@ -1,12 +1,29 @@
 #include "VulkanInstance.h"
+#include "VulkanValidation.h"
 
 #include <stdexcept>
 #include <vector>
 #include <iostream>
 #include <spdlog/spdlog.h>
 
+
 Core::Vulkan::VulkanInstance::VulkanInstance()
 {
+    #ifdef DEBUG
+    {
+        m_EnableValidationLayers = true;
+    }
+    #endif // DEBUG
+
+    if (m_EnableValidationLayers)
+    {
+        spdlog::info("Validation layers enabled!");
+    }
+    else
+    {
+        spdlog::info("Validation layers disabled!");
+    }
+
     CreateInstance();
 }
 
@@ -20,6 +37,12 @@ void Core::Vulkan::VulkanInstance::CreateInstance()
 {
     spdlog::info("VulkanInstance::Init()");
 
+    // Check if validation layers are available
+
+
+    ///////////////////////////////////////////////////////////
+    // Create Vulkan instance
+    ///////////////////////////////////////////////////////////
     VkApplicationInfo appInfo = {};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Vulkan Renderer";
@@ -32,27 +55,57 @@ void Core::Vulkan::VulkanInstance::CreateInstance()
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceCreateInfo.pApplicationInfo = &appInfo;
 
-    uint32_t glfwExtensionCount{ 0 };
-    const char** glfwExtensions{ glfwGetRequiredInstanceExtensions(&glfwExtensionCount) };
+    auto extensions = GetRequiredExtensions();
+    instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    instanceCreateInfo.ppEnabledExtensionNames = extensions.data();
 
-    instanceCreateInfo.enabledExtensionCount = glfwExtensionCount;
-    instanceCreateInfo.ppEnabledExtensionNames = glfwExtensions;
-    instanceCreateInfo.enabledLayerCount = 0;
-
-    if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_Instance) != VK_SUCCESS)
+    ///////////////////////////////////////////////////////////
+    // Validation layers
+    ///////////////////////////////////////////////////////////
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
+    if (m_EnableValidationLayers)
     {
-        throw std::runtime_error("Failed to create Vulkan instance!");
+        instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(VulkanValidation::ValidationLayers.size());
+        instanceCreateInfo.ppEnabledLayerNames = VulkanValidation::ValidationLayers.data();
+
+        VulkanValidation::PopulateDebugMessengerCreateInfo(debugCreateInfo);
+        instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+    }
+    else
+    {
+        instanceCreateInfo.enabledLayerCount = 0;
+        instanceCreateInfo.pNext = nullptr;
     }
 
-    uint32_t extensionCount{ 0 };
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+    ///////////////////////////////////////////////////////////
+    // Create Vulkan instance
+    ///////////////////////////////////////////////////////////
+    if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_Instance) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create instance!");
+    }
 
-    std::vector<VkExtensionProperties> extensions(extensionCount);
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-
+    ///////////////////////////////////////////////////////////
+    // Print available extensions
+    ///////////////////////////////////////////////////////////
     std::cout << "Available extensions:" << std::endl;
     for (const auto& extension : extensions)
     {
-        std::cout << "\t" << extension.extensionName << std::endl;
+        std::cout << "\t" << extension << std::endl;
     }
+}
+
+std::vector<const char*> Core::Vulkan::VulkanInstance::GetRequiredExtensions()
+{
+    uint32_t glfwExtensionCount{ 0 };
+    const char** glfwExtensions{ glfwGetRequiredInstanceExtensions(&glfwExtensionCount) };
+
+    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+    if (m_EnableValidationLayers)
+    {
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+    }
+
+    return extensions;
 }

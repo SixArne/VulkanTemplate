@@ -4,6 +4,7 @@
 namespace Core::Vulkan
 {
     class VulkanInstance;
+    class VulkanValidation;
 
     class VulkanApplication
     {
@@ -21,6 +22,7 @@ namespace Core::Vulkan
 
     private:
         VulkanInstance* m_VulkanInstance;
+        VulkanValidation* m_VulkanValidation;
     };
 }
 
