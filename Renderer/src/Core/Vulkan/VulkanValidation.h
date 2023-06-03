@@ -6,10 +6,12 @@
 
 namespace Core::Vulkan
 {
-    class VulkanValidation
+    class VulkanApplication;
+
+    class VulkanValidation final
     {
     public:
-        VulkanValidation(VkInstance instance);
+        VulkanValidation(const VulkanApplication* vulkanApp);
         ~VulkanValidation();
 
         void CreateDebugMessenger();
@@ -18,6 +20,7 @@ namespace Core::Vulkan
             "VK_LAYER_KHRONOS_validation"
         };
         static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+        bool AreValidationLayersEnabled() const { return m_EnableValidationLayers; };
 
     private:
         bool CheckValidationLayerSupport();
@@ -34,6 +37,8 @@ namespace Core::Vulkan
 
         bool m_EnableValidationLayers{false};
         VkInstance m_VulkanInstance{};
+        const VulkanApplication* m_VulkanApp{};
+
         VkDebugUtilsMessengerEXT m_DebugMessenger{};
     };
 }

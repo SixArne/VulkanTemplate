@@ -6,7 +6,7 @@
 
 namespace Core::Vulkan
 {
-    class VulkanInstance
+    class VulkanInstance final
     {
     public:
         VulkanInstance();

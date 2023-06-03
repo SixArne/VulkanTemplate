@@ -6,14 +6,15 @@
 
 namespace Core::Vulkan
 {
+    class VulkanApplication;
     ///////////////////////////////////////////////////////////////////////////
     // VulkanPhysicalDevice
     // - This gets destroyed by the VkInstance.
     ///////////////////////////////////////////////////////////////////////////
-    class VulkanPhysicalDevice
+    class VulkanPhysicalDevice final
     {
     public:
-        VulkanPhysicalDevice(VkInstance instance);
+        VulkanPhysicalDevice(const VulkanApplication* vulkanApp);
         ~VulkanPhysicalDevice();
 
         //void PickPhysicalDevice(VkInstance instance) {};
@@ -23,6 +24,8 @@ namespace Core::Vulkan
         VulkanPhysicalDevice& operator=(const VulkanPhysicalDevice&) = delete;
         VulkanPhysicalDevice(VulkanPhysicalDevice&&) = default;
         VulkanPhysicalDevice& operator=(VulkanPhysicalDevice&&) = default;
+
+        const VkPhysicalDevice GetPhysicalDevice() const { return m_PhysicalDevice; }
 
     private:
         void PickPhysicalDevice();
@@ -35,7 +38,7 @@ namespace Core::Vulkan
         VkPhysicalDevice m_PhysicalDevice{VK_NULL_HANDLE};
         VkPhysicalDeviceProperties m_DeviceProperties{};
 
-        VkInstance m_VkInstance{};
+        const VulkanApplication* m_VulkanApp{};
     };
 }
 

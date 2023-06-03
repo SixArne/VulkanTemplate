@@ -2,6 +2,8 @@
 #include "VulkanInstance.h"
 #include "VulkanValidation.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanDevice.h"
+#include "VulkanInstance.h"
 
 #include <spdlog/spdlog.h>
 
@@ -11,6 +13,8 @@ Core::Vulkan::VulkanApplication::VulkanApplication()
 
 Core::Vulkan::VulkanApplication::~VulkanApplication()
 {
+    delete m_VulkanDevice;
+    delete m_VulkanPhysicalDevice;
     delete m_VulkanValidation;
     delete m_VulkanInstance;
 
@@ -24,6 +28,27 @@ void Core::Vulkan::VulkanApplication::Init()
     // Create instance (this is needed for the following vulkan components)
     m_VulkanInstance = new VulkanInstance();
 
-    m_VulkanValidation = new VulkanValidation(m_VulkanInstance->GetInstance());
-    m_VulkanPhysicalDevice = new VulkanPhysicalDevice(m_VulkanInstance->GetInstance());
+    m_VulkanValidation = new VulkanValidation(this);
+    m_VulkanPhysicalDevice = new VulkanPhysicalDevice(this);
+    m_VulkanDevice = new VulkanDevice(this);
+}
+
+const VkPhysicalDevice Core::Vulkan::VulkanApplication::GetPhysicalDevice() const
+{
+    return m_VulkanPhysicalDevice->GetPhysicalDevice();
+}
+
+const VkInstance Core::Vulkan::VulkanApplication::GetInstance() const
+{
+    return m_VulkanInstance->GetInstance();
+}
+
+const Core::Vulkan::VulkanValidation* Core::Vulkan::VulkanApplication::GetValidation() const
+{
+    return m_VulkanValidation;
+}
+
+const VkDevice Core::Vulkan::VulkanApplication::GetDevice() const
+{
+    return m_VulkanDevice->GetDevice();
 }

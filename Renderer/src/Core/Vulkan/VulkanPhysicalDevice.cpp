@@ -1,12 +1,15 @@
 #include "VulkanPhysicalDevice.h"
+#include "VulkanApplication.h"
 
 #include "src/Core/Logger/Logger.h"
 #include <stdexcept>
 #include <vector>
 #include <GLFW/glfw3.h>
 
-Core::Vulkan::VulkanPhysicalDevice::VulkanPhysicalDevice(VkInstance instance)
-    : m_VkInstance(instance)
+#include "Helpers/Queues.h"
+
+Core::Vulkan::VulkanPhysicalDevice::VulkanPhysicalDevice(const VulkanApplication* vulkanApplication)
+    : m_VulkanApp{vulkanApplication}
 {
     PickPhysicalDevice();
 }
@@ -17,8 +20,10 @@ Core::Vulkan::VulkanPhysicalDevice::~VulkanPhysicalDevice()
 
 void Core::Vulkan::VulkanPhysicalDevice::PickPhysicalDevice()
 {
+    VkInstance instance = m_VulkanApp->GetInstance();
+
     uint32_t deviceCount = 0;
-    vkEnumeratePhysicalDevices(m_VkInstance, &deviceCount, nullptr);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
     if (deviceCount == 0)
     {
@@ -26,7 +31,7 @@ void Core::Vulkan::VulkanPhysicalDevice::PickPhysicalDevice()
     }
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
-    vkEnumeratePhysicalDevices(m_VkInstance, &deviceCount, devices.data());
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
     // TODO: add device rating
     for (const auto& device : devices)
@@ -73,6 +78,12 @@ uint32_t Core::Vulkan::VulkanPhysicalDevice::RatePhysicalDevice(VkPhysicalDevice
     }
 
     if (!deviceFeatures.tessellationShader)
+    {
+        return 0;
+    }
+
+    Helpers::QueueFamilyIndices indices = Helpers::FindQueueFamilies(device);
+    if (!indices.IsComplete())
     {
         return 0;
     }

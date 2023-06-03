@@ -13,6 +13,15 @@ namespace Core::Errors
     private:
         const char* m_Message;
     };
+
+    class vulkan_device_exception : public std::exception
+    {
+    public:
+        vulkan_device_exception(const char* message) : m_Message(message) {}
+        const char* what() const noexcept override { return m_Message; }
+    private:
+        const char* m_Message;
+    };
 }
 
 #endif //VULKAN_RENDERER_CUSTOM_ERRORS_H

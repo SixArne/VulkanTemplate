@@ -1,8 +1,9 @@
 #include "VulkanValidation.h"
+#include "VulkanApplication.h"
 #include <spdlog/spdlog.h>
 
-Core::Vulkan::VulkanValidation::VulkanValidation(VkInstance instance)
-    : m_VulkanInstance(instance)
+Core::Vulkan::VulkanValidation::VulkanValidation(const VulkanApplication* vulkanApp)
+    : m_VulkanApp{vulkanApp}
 {
     #ifdef DEBUG
     {
@@ -32,7 +33,7 @@ Core::Vulkan::VulkanValidation::~VulkanValidation()
 {
     if (m_EnableValidationLayers)
     {
-        DestroyDebugUtilsMessengerEXT(m_VulkanInstance, m_DebugMessenger, nullptr);
+        DestroyDebugUtilsMessengerEXT(m_VulkanApp->GetInstance(), m_DebugMessenger, nullptr);
         spdlog::info("VulkanInstance::Messenger::Destroy()");
     }
 }
@@ -91,7 +92,7 @@ void Core::Vulkan::VulkanValidation::CreateDebugMessenger()
     VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
     PopulateDebugMessengerCreateInfo(createInfo);
 
-    if (CreateDebugUtilsMessengerEXT(m_VulkanInstance, &createInfo, nullptr, &m_DebugMessenger) != VK_SUCCESS)
+    if (CreateDebugUtilsMessengerEXT(m_VulkanApp->GetInstance(), &createInfo, nullptr, &m_DebugMessenger) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to set up debug messenger!");
     }

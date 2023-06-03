@@ -12,6 +12,7 @@ add_executable(Renderer
     src/Core/Vulkan/VulkanApplication.cpp
     src/Core/Vulkan/VulkanValidation.cpp
     src/Core/Vulkan/VulkanPhysicalDevice.cpp
+    src/Core/Vulkan/VulkanDevice.cpp
 
     src/Core/Logger/Logger.cpp
     # src/Core/Errors/VulkanErrors.cpp
