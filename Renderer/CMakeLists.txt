@@ -6,9 +6,9 @@ include(FetchContent)
 
 add_executable(Renderer
     src/main.cpp
-    
+
     src/Core/Logger/Logger.cpp
-    src/Core/Logger/Logger.h
+    # src/Core/Errors/VulkanErrors.cpp
 )
 
 # Set compiler warnings as errors
@@ -23,13 +23,15 @@ endif()
 # Enable debug define
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode enabled. Optimizations disabled.")
-    target_compile_definitions(Renderer PUBLIC DEBUG=1)
-    target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
+    target_compile_definitions(Renderer PUBLIC DEBUG=1)  
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "Release mode enabled. Optimizations enabled.")
     target_compile_definitions(Renderer PUBLIC DEBUG=0)
-    target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
 endif()
+
+target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
+target_compile_definitions(Renderer PUBLIC GLFW_EXPOSE_NATIVE_WIN32=1)
+target_compile_definitions(Renderer PUBLIC VK_USE_PLATFORM_WIN32_KHR=1)    
 
 # GLM
 FetchContent_Declare(
