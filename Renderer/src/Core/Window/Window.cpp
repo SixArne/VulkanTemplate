@@ -30,6 +30,8 @@ void Core::Window::Create()
 void Core::Window::Update([[maybe_unused]] float deltaTime)
 {
     glfwPollEvents();
+
+    
 }
 
 HWND Core::Window::GetGLFWwindowHandle() const

@@ -4,6 +4,8 @@
 #include "Core/Window/Window.h"
 #include "Core/Logger/Logger.h"
 
+#include <iostream>
+
 int main() {
     Core::Logger::Init();
 
@@ -11,4 +13,6 @@ int main() {
 
     std::unique_ptr<Core::Application> app = std::make_unique<Core::Application>(windowData);
     app->Start();
+
+    std::cin.get();
 }

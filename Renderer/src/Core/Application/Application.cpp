@@ -4,6 +4,7 @@
 #include <spdlog/spdlog.h>
 #include <stdint.h>
 #include <chrono>
+#include "src/Core/Logger/Logger.h"
 
 // TODO: share Smart pointer the window
 Core::Application::Application(const Window::WindowData& windowData)
@@ -42,4 +43,7 @@ void Core::Application::Start()
         const auto sleeptime = currentTime + std::chrono::milliseconds(frameTimeMs) - std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_for(sleeptime);
     }
+
+    int i{0};
+    L_DEBUG("Closing app {}", i);
 }

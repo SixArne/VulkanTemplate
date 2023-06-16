@@ -27,7 +27,8 @@ void Core::Vulkan::VulkanPhysicalDevice::PickPhysicalDevice()
 
     if (deviceCount == 0)
     {
-        throw std::runtime_error("failed to find GPUs with Vulkan support!");
+        L_ERROR("Failed to find GPUs with Vulkan support");
+        throw std::runtime_error("Failed to find GPUs with Vulkan support!");
     }
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -50,8 +51,11 @@ void Core::Vulkan::VulkanPhysicalDevice::PickPhysicalDevice()
     }
     else
     {
+        L_ERROR("Failed to find a suitable GPU");
         throw std::runtime_error("failed to find a suitable GPU!");
     }
+
+    L_DEBUG("Vulkan Physical device chosen")
 }
 
 uint32_t Core::Vulkan::VulkanPhysicalDevice::RatePhysicalDevice(VkPhysicalDevice device)

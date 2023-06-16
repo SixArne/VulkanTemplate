@@ -7,8 +7,7 @@
 #include "VulkanSurface.h"
 
 #include "src/Core/Window/Window.h"
-
-#include <spdlog/spdlog.h>
+#include "src/Core/Logger/Logger.h"
 
 Core::Vulkan::VulkanApplication::VulkanApplication()
 {}
@@ -26,12 +25,12 @@ Core::Vulkan::VulkanApplication::~VulkanApplication()
     delete m_VulkanValidation;
     delete m_VulkanInstance;
 
-    spdlog::info("VulkanApplication::Destroy()");
+    L_DEBUG("Vulkan Application destroyed")
 }
 
 void Core::Vulkan::VulkanApplication::Init()
 {
-    spdlog::info("VulkanApplication::Init()");
+    L_DEBUG("Vulkan Application created")
 
     // Create instance (this is needed for the following vulkan components)
     m_VulkanInstance = new VulkanInstance();

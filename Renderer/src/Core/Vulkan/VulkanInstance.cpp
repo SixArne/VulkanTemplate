@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream>
-#include <spdlog/spdlog.h>
+#include "src/Core/Logger/Logger.h"
 
 
 Core::Vulkan::VulkanInstance::VulkanInstance()
@@ -17,11 +17,11 @@ Core::Vulkan::VulkanInstance::VulkanInstance()
 
     if (m_EnableValidationLayers)
     {
-        spdlog::info("Validation layers enabled!");
+        L_DEBUG("Validation layers enabled");
     }
     else
     {
-        spdlog::info("Validation layers disabled!");
+        L_DEBUG("Validation layers disabled");
     }
 
     CreateInstance();
@@ -30,13 +30,11 @@ Core::Vulkan::VulkanInstance::VulkanInstance()
 Core::Vulkan::VulkanInstance::~VulkanInstance()
 {
     vkDestroyInstance(m_Instance, nullptr);
-    spdlog::info("VulkanInstance::Destroy()");
+    L_DEBUG("Validation Instance destroyed");
 }
 
 void Core::Vulkan::VulkanInstance::CreateInstance()
 {
-    spdlog::info("VulkanInstance::Init()");
-
     // Check if validation layers are available
 
 
@@ -82,6 +80,7 @@ void Core::Vulkan::VulkanInstance::CreateInstance()
     ///////////////////////////////////////////////////////////
     if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_Instance) != VK_SUCCESS)
     {
+        L_ERROR("Failed to create Vulkan Instance");
         throw std::runtime_error("Failed to create instance!");
     }
 
@@ -93,6 +92,8 @@ void Core::Vulkan::VulkanInstance::CreateInstance()
     {
         std::cout << "\t" << extension << std::endl;
     }
+
+    L_DEBUG("Vulkan Instance created");
 }
 
 std::vector<const char*> Core::Vulkan::VulkanInstance::GetRequiredExtensions()

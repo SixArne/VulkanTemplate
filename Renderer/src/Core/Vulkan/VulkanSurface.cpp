@@ -6,6 +6,8 @@
 #include <GLFW/glfw3native.h>
 #include <stdexcept>
 
+#include "src/Core/Logger/Logger.h"
+
 namespace Core::Vulkan
 {
     VulkanSurface::VulkanSurface(const VulkanApplication* app)
@@ -17,6 +19,7 @@ namespace Core::Vulkan
     VulkanSurface::~VulkanSurface()
     {
         vkDestroySurfaceKHR(m_App->GetInstance(), m_Surface, nullptr);
+        L_DEBUG("Validation surface destroyed");
     }
 
     void VulkanSurface::Init()
@@ -32,7 +35,9 @@ namespace Core::Vulkan
 
         if (vkCreateWin32SurfaceKHR(m_App->GetInstance(), &createInfo, nullptr, &m_Surface) != VK_SUCCESS)
         {
-            throw std::runtime_error("failed to create window surface!");
+            L_ERROR("Failed to create window surface");
         }
+
+        L_DEBUG("Vulkan Surface created")
     }
 }

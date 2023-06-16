@@ -1,6 +1,7 @@
 #include "VulkanValidation.h"
 #include "VulkanApplication.h"
-#include <spdlog/spdlog.h>
+
+#include "src/Core/Logger/Logger.h"
 
 Core::Vulkan::VulkanValidation::VulkanValidation(const VulkanApplication* vulkanApp)
     : m_VulkanApp{vulkanApp}
@@ -13,15 +14,17 @@ Core::Vulkan::VulkanValidation::VulkanValidation(const VulkanApplication* vulkan
 
     if (m_EnableValidationLayers)
     {
-        spdlog::info("Validation layers enabled!");
+        L_DEBUG("Validation layers enabled");
+        
     }
     else
     {
-        spdlog::info("Validation layers disabled!");
+        L_DEBUG("Validation layers disabled");
     }
 
     if (m_EnableValidationLayers && !CheckValidationLayerSupport())
     {
+        L_ERROR("Validation layers requested, but not available!");
         throw std::runtime_error("Validation layers requested, but not available!");
     }
 
@@ -34,7 +37,7 @@ Core::Vulkan::VulkanValidation::~VulkanValidation()
     if (m_EnableValidationLayers)
     {
         DestroyDebugUtilsMessengerEXT(m_VulkanApp->GetInstance(), m_DebugMessenger, nullptr);
-        spdlog::info("VulkanInstance::Messenger::Destroy()");
+        L_DEBUG("Vulkan Validation Destroyed");
     }
 }
 
@@ -94,11 +97,12 @@ void Core::Vulkan::VulkanValidation::CreateDebugMessenger()
 
     if (CreateDebugUtilsMessengerEXT(m_VulkanApp->GetInstance(), &createInfo, nullptr, &m_DebugMessenger) != VK_SUCCESS)
     {
+        L_ERROR("Failed to set up debug messenger!");
         throw std::runtime_error("Failed to set up debug messenger!");
     }
     else
     {
-        spdlog::info("VulkanInstance::Messenger::Created()");
+        L_DEBUG("Vulkan Validation created");
     }
 }
 
@@ -111,23 +115,23 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Core::Vulkan::VulkanValidation::DebugCallback(
 {
     if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
     {
-        spdlog::warn("validation layer: {}", pCallbackData->pMessage);
+        L_WARN("validation layer: {}", pCallbackData->pMessage);
     }
     else if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
     {
-        spdlog::info("validation layer: {}", pCallbackData->pMessage);
+        L_INFO("validation layer: {}", pCallbackData->pMessage);
     }
     else if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
     {
-        spdlog::debug("validation layer: {}", pCallbackData->pMessage);
+        L_DEBUG("validation layer: {}", pCallbackData->pMessage);        
     }
     else if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
     {
-        spdlog::error("validation layer: {}", pCallbackData->pMessage);
+        L_ERROR("validation layer: {}", pCallbackData->pMessage);        
     }
     else
     {
-        spdlog::trace("validation layer: {}", pCallbackData->pMessage);
+        L_TRACE("validation layer: {}", pCallbackData->pMessage);        
     }
 
     return VK_FALSE;

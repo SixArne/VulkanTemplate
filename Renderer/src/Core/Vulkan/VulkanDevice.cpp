@@ -67,4 +67,6 @@ void Core::Vulkan::VulkanDevice::CreateDevice()
 
     vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &m_PresentQueue);
     vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &m_GraphicsQueue);
+
+    L_DEBUG("Vulkan Logical device created")
 }
