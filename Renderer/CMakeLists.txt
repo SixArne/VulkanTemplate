@@ -6,13 +6,30 @@ include(FetchContent)
 
 add_executable(Renderer
     src/main.cpp
+    
     src/Core/Window/Window.cpp
+    src/Core/Window/Window.h
+    
     src/Core/Application/Application.cpp
+    src/Core/Application/Application.h
+    
     src/Core/Vulkan/VulkanInstance.cpp
+    src/Core/Vulkan/VulkanInstance.h
+    
     src/Core/Vulkan/VulkanApplication.cpp
+    src/Core/Vulkan/VulkanApplication.h
+    
     src/Core/Vulkan/VulkanValidation.cpp
+    src/Core/Vulkan/VulkanValidation.h
+    
     src/Core/Vulkan/VulkanPhysicalDevice.cpp
+    src/Core/Vulkan/VulkanPhysicalDevice.h
+
     src/Core/Vulkan/VulkanDevice.cpp
+    src/Core/Vulkan/VulkanDevice.h
+
+    src/Core/Vulkan/VulkanSurface.cpp
+    src/Core/Vulkan/VulkanSurface.h
 
     src/Core/Logger/Logger.cpp
     # src/Core/Errors/VulkanErrors.cpp
@@ -30,13 +47,15 @@ endif()
 # Enable debug define
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode enabled. Optimizations disabled.")
-    target_compile_definitions(Renderer PUBLIC DEBUG=1)
-    target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
+    target_compile_definitions(Renderer PUBLIC DEBUG=1)  
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "Release mode enabled. Optimizations enabled.")
     target_compile_definitions(Renderer PUBLIC DEBUG=0)
-    target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
 endif()
+
+target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
+target_compile_definitions(Renderer PUBLIC GLFW_EXPOSE_NATIVE_WIN32=1)
+target_compile_definitions(Renderer PUBLIC VK_USE_PLATFORM_WIN32_KHR=1)    
 
 # GLM
 FetchContent_Declare(

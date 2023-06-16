@@ -27,9 +27,10 @@ namespace Core
         Window(const WindowData& windowData);
         ~Window();
 
-        void CreateWindow();
+        void Create();
         bool IsRunning() const { return !glfwWindowShouldClose(m_pWindow); };
         Dimensions GetDimensions() const { return { m_Width, m_Height }; };
+        HWND GetGLFWwindowHandle() const;
         void Update(float deltaTime);
 
     private:

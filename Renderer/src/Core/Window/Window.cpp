@@ -1,5 +1,8 @@
 #include "Window.h"
 
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+
 Core::Window::Window()
     : m_Width(800), m_Height(600), m_Title("Vulkan window")
 {
@@ -16,7 +19,7 @@ Core::Window::~Window()
     glfwTerminate();
 }
 
-void Core::Window::CreateWindow()
+void Core::Window::Create()
 {
     glfwInit();
 
@@ -27,4 +30,10 @@ void Core::Window::CreateWindow()
 void Core::Window::Update([[maybe_unused]] float deltaTime)
 {
     glfwPollEvents();
+}
+
+HWND Core::Window::GetGLFWwindowHandle() const
+{
+    return glfwGetWin32Window(m_pWindow);
+    // return m_pWindow;
 }

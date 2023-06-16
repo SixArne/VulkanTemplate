@@ -5,14 +5,12 @@
 #include <stdint.h>
 #include <chrono>
 
-// Okay this sucks
-#undef CreateWindow
-
+// TODO: share Smart pointer the window
 Core::Application::Application(const Window::WindowData& windowData)
     : m_Window(std::make_unique<Window>(windowData)),
-    m_VulkanApplication(std::make_unique<Vulkan::VulkanApplication>())
+    m_VulkanApplication(std::make_unique<Vulkan::VulkanApplication>(m_Window.get()))
 {
-    m_Window->CreateWindow();
+    m_Window->Create();
     m_VulkanApplication->Init();
 }
 
