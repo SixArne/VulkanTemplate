@@ -105,3 +105,7 @@ target_link_libraries(Renderer PUBLIC
     glfw
     Vulkan::Vulkan
 )
+
+if(MSVC)
+ target_compile_options(Renderer PRIVATE "/MP")
+endif()
