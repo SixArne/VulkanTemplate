@@ -35,6 +35,7 @@ namespace Core::Vulkan
         const VkInstance GetInstance() const;
         const VulkanValidation* GetValidation() const;
         const VkDevice GetDevice() const;
+        const VkSurfaceKHR GetSurface() const;
 
         const Window* GetWindow() const;
 

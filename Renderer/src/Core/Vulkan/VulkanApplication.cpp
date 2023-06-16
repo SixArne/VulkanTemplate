@@ -37,9 +37,9 @@ void Core::Vulkan::VulkanApplication::Init()
     m_VulkanInstance = new VulkanInstance();
 
     m_VulkanValidation = new VulkanValidation(this);
+    m_VulkanSurface = new VulkanSurface(this);
     m_VulkanPhysicalDevice = new VulkanPhysicalDevice(this);
     m_VulkanDevice = new VulkanDevice(this);
-    m_VulkanSurface = new VulkanSurface(this);
 }
 
 const VkPhysicalDevice Core::Vulkan::VulkanApplication::GetPhysicalDevice() const
@@ -65,4 +65,9 @@ const VkDevice Core::Vulkan::VulkanApplication::GetDevice() const
 const Core::Window* Core::Vulkan::VulkanApplication::GetWindow() const
 {
     return m_Window;
+}
+
+const VkSurfaceKHR Core::Vulkan::VulkanApplication::GetSurface() const
+{
+    return m_VulkanSurface->GetSurface();
 }

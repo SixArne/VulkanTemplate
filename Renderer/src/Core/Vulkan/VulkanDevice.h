@@ -24,6 +24,8 @@ namespace Core::Vulkan
 
     private:
         VkDevice m_Device{};
+        VkQueue m_PresentQueue{};
+        VkQueue m_GraphicsQueue{};
 
         const VulkanApplication* m_VulkanApp{};
     };

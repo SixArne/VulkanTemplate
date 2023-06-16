@@ -7,6 +7,8 @@
 #include "src/Core/Logger/Logger.h"
 #include "src/Core/Errors/VulkanErrors.h"
 
+#include <set>
+
 Core::Vulkan::VulkanDevice::VulkanDevice(const VulkanApplication* vulkanApplication)
     :m_VulkanApp{vulkanApplication}
 {
@@ -20,23 +22,30 @@ Core::Vulkan::VulkanDevice::~VulkanDevice()
 
 void Core::Vulkan::VulkanDevice::CreateDevice()
 {
-    Helpers::QueueFamilyIndices indices = Helpers::FindQueueFamilies(m_VulkanApp->GetPhysicalDevice());
+    Helpers::QueueFamilyIndices indices = Helpers::FindQueueFamilies(m_VulkanApp->GetPhysicalDevice(), m_VulkanApp->GetSurface());
 
-    // Graphics queue
-    VkDeviceQueueCreateInfo queueCreateInfo{};
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-    queueCreateInfo.queueCount = 1;
-
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
+    std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+    
     float queuePriority = 1.0f;
-    queueCreateInfo.pQueuePriorities = &queuePriority;
+
+    for (uint32_t queueFamily : uniqueQueueFamilies)
+    {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
 
     VkPhysicalDeviceFeatures deviceFeatures{};
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    createInfo.pQueueCreateInfos = &queueCreateInfo;
-    createInfo.queueCreateInfoCount = 1;
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pEnabledFeatures = &deviceFeatures;
     createInfo.enabledExtensionCount = 0;
 
@@ -55,4 +64,7 @@ void Core::Vulkan::VulkanDevice::CreateDevice()
         L_ERROR("FAILED TO CREATE LOGICAL DEVICE");
         throw Errors::vulkan_device_exception("Failed to create device");
     }
+
+    vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &m_PresentQueue);
+    vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &m_GraphicsQueue);
 }

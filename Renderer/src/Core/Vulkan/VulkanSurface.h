@@ -13,6 +13,9 @@ namespace Core::Vulkan
         VulkanSurface(const VulkanApplication* app);
         ~VulkanSurface();
 
+        const VkSurfaceKHR GetSurface() const { return m_Surface; };
+
+
     private:
         void Init();
 

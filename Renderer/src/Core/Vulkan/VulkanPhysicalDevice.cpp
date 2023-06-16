@@ -82,7 +82,7 @@ uint32_t Core::Vulkan::VulkanPhysicalDevice::RatePhysicalDevice(VkPhysicalDevice
         return 0;
     }
 
-    Helpers::QueueFamilyIndices indices = Helpers::FindQueueFamilies(device);
+    Helpers::QueueFamilyIndices indices = Helpers::FindQueueFamilies(device, m_VulkanApp->GetSurface());
     if (!indices.IsComplete())
     {
         return 0;

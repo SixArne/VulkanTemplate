@@ -32,6 +32,7 @@ add_executable(Renderer
     src/Core/Vulkan/VulkanSurface.h
 
     src/Core/Logger/Logger.cpp
+    src/Core/Vulkan/Helpers/Queues.h
     # src/Core/Errors/VulkanErrors.cpp
 )
 
