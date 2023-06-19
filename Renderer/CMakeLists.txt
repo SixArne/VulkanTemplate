@@ -31,8 +31,13 @@ add_executable(Renderer
     src/Core/Vulkan/VulkanSurface.cpp
     src/Core/Vulkan/VulkanSurface.h
 
+    src/Core/Vulkan/VulkanSwapChain.cpp
+    src/Core/Vulkan/VulkanSwapChain.h
+
     src/Core/Logger/Logger.cpp
-    src/Core/Vulkan/Helpers/Queues.h
+
+    src/Core/Vulkan/Helpers/Helpers.cpp
+    src/Core/Vulkan/Helpers/Helpers.h
     # src/Core/Errors/VulkanErrors.cpp
 )
 
@@ -54,6 +59,7 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_definitions(Renderer PUBLIC DEBUG=0)
 endif()
 
+target_compile_definitions(Renderer PUBLIC NOMINMAX=1)
 target_compile_definitions(Renderer PUBLIC GLFW_INCLUDE_VULKAN=1)
 target_compile_definitions(Renderer PUBLIC GLFW_EXPOSE_NATIVE_WIN32=1)
 target_compile_definitions(Renderer PUBLIC VK_USE_PLATFORM_WIN32_KHR=1)    

@@ -5,6 +5,7 @@
 #include "VulkanDevice.h"
 #include "VulkanInstance.h"
 #include "VulkanSurface.h"
+#include "VulkanSwapChain.h"
 
 #include "src/Core/Window/Window.h"
 #include "src/Core/Logger/Logger.h"
@@ -19,6 +20,7 @@ Core::Vulkan::VulkanApplication::VulkanApplication(const Window* window)
 
 Core::Vulkan::VulkanApplication::~VulkanApplication()
 {
+    delete m_VulkanSwapChain;
     delete m_VulkanSurface;
     delete m_VulkanDevice;
     delete m_VulkanPhysicalDevice;
@@ -39,6 +41,7 @@ void Core::Vulkan::VulkanApplication::Init()
     m_VulkanSurface = new VulkanSurface(this);
     m_VulkanPhysicalDevice = new VulkanPhysicalDevice(this);
     m_VulkanDevice = new VulkanDevice(this);
+    m_VulkanSwapChain = new VulkanSwapChain(this);
 }
 
 const VkPhysicalDevice Core::Vulkan::VulkanApplication::GetPhysicalDevice() const

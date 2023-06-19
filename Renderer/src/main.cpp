@@ -9,7 +9,7 @@
 int main() {
     Core::Logger::Init();
 
-    Core::Window::WindowData windowData{ 1600, 900, "Renderer" };
+    WindowData windowData{ 1600, 900, "Renderer" };
 
     std::unique_ptr<Core::Application> app = std::make_unique<Core::Application>(windowData);
     app->Start();

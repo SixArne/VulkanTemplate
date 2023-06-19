@@ -1,6 +1,8 @@
 #ifndef VULKAN_RENDERER_VULKANAPPLICATION_H
 #define VULKAN_RENDERER_VULKANAPPLICATION_H
 
+#include <vector>
+
 #include <GLFW/glfw3.h>
 
 namespace Core
@@ -15,6 +17,7 @@ namespace Core::Vulkan
     class VulkanPhysicalDevice;
     class VulkanDevice;
     class VulkanSurface;
+    class VulkanSwapChain;
 
     class VulkanApplication final
     {
@@ -39,12 +42,18 @@ namespace Core::Vulkan
 
         const Window* GetWindow() const;
 
+        const std::vector<const char*> DeviceExtensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+
     private:
+
         VulkanInstance* m_VulkanInstance{};
         VulkanValidation* m_VulkanValidation{};
         VulkanPhysicalDevice* m_VulkanPhysicalDevice{};
         VulkanDevice* m_VulkanDevice{};
         VulkanSurface* m_VulkanSurface{};
+        VulkanSwapChain* m_VulkanSwapChain{};
 
         const Window* m_Window{};
     };

@@ -29,6 +29,8 @@ namespace Core::Vulkan
 
     private:
         void PickPhysicalDevice();
+        bool IsDeviceSuitable(VkPhysicalDevice device);
+        bool CheckDeviceExtensionsSupport(VkPhysicalDevice device);
 
         // TODO: Make this function check for more.
         uint32_t RatePhysicalDevice(VkPhysicalDevice device);

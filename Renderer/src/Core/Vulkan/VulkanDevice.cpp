@@ -3,7 +3,7 @@
 #include "VulkanValidation.h"
 #include "VulkanApplication.h"
 
-#include "Helpers/Queues.h"
+#include "Helpers/Helpers.h"
 #include "src/Core/Logger/Logger.h"
 #include "src/Core/Errors/VulkanErrors.h"
 
@@ -47,7 +47,8 @@ void Core::Vulkan::VulkanDevice::CreateDevice()
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pEnabledFeatures = &deviceFeatures;
-    createInfo.enabledExtensionCount = 0;
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(m_VulkanApp->DeviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = m_VulkanApp->DeviceExtensions.data();
 
     if (m_VulkanApp->GetValidation()->AreValidationLayersEnabled())
     {

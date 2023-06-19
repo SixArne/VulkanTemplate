@@ -7,7 +7,7 @@
 #include "src/Core/Logger/Logger.h"
 
 // TODO: share Smart pointer the window
-Core::Application::Application(const Window::WindowData& windowData)
+Core::Application::Application(const WindowData& windowData)
     : m_Window(std::make_unique<Window>(windowData)),
     m_VulkanApplication(std::make_unique<Vulkan::VulkanApplication>(m_Window.get()))
 {

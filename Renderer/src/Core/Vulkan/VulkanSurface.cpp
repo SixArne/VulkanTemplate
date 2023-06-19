@@ -26,7 +26,7 @@ namespace Core::Vulkan
     {
         using Core::Window;
 
-        auto handle = m_App->GetWindow()->GetGLFWwindowHandle();
+        auto handle = glfwGetWin32Window(m_App->GetWindow()->GetGLFWWindow());
 
         VkWin32SurfaceCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
