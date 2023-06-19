@@ -10,66 +10,69 @@
 #include "src/Core/Window/Window.h"
 #include "src/Core/Logger/Logger.h"
 
-Core::Vulkan::VulkanApplication::VulkanApplication()
-{}
-
-Core::Vulkan::VulkanApplication::VulkanApplication(const Window* window)
-   : m_Window{window}
+namespace Core::Vulkan
 {
-}
+    VulkanApplication::VulkanApplication()
+    {}
 
-Core::Vulkan::VulkanApplication::~VulkanApplication()
-{
-    delete m_VulkanSwapChain;
-    delete m_VulkanSurface;
-    delete m_VulkanDevice;
-    delete m_VulkanPhysicalDevice;
-    delete m_VulkanValidation;
-    delete m_VulkanInstance;
+    VulkanApplication::VulkanApplication(const Window* window)
+    : m_Window{window}
+    {
+    }
 
-    L_DEBUG("Vulkan Application destroyed")
-}
+    VulkanApplication::~VulkanApplication()
+    {
+        delete m_VulkanSwapChain;
+        delete m_VulkanSurface;
+        delete m_VulkanDevice;
+        delete m_VulkanPhysicalDevice;
+        delete m_VulkanValidation;
+        delete m_VulkanInstance;
 
-void Core::Vulkan::VulkanApplication::Init()
-{
-    L_DEBUG("Vulkan Application created")
+        L_DEBUG("Vulkan Application destroyed")
+    }
 
-    // Create instance (this is needed for the following vulkan components)
-    m_VulkanInstance = new VulkanInstance();
+    void VulkanApplication::Init()
+    {
+        L_DEBUG("Vulkan Application created")
 
-    m_VulkanValidation = new VulkanValidation(this);
-    m_VulkanSurface = new VulkanSurface(this);
-    m_VulkanPhysicalDevice = new VulkanPhysicalDevice(this);
-    m_VulkanDevice = new VulkanDevice(this);
-    m_VulkanSwapChain = new VulkanSwapChain(this);
-}
+        // Create instance (this is needed for the following vulkan components)
+        m_VulkanInstance = new VulkanInstance();
 
-const VkPhysicalDevice Core::Vulkan::VulkanApplication::GetPhysicalDevice() const
-{
-    return m_VulkanPhysicalDevice->GetPhysicalDevice();
-}
+        m_VulkanValidation = new VulkanValidation(this);
+        m_VulkanSurface = new VulkanSurface(this);
+        m_VulkanPhysicalDevice = new VulkanPhysicalDevice(this);
+        m_VulkanDevice = new VulkanDevice(this);
+        m_VulkanSwapChain = new VulkanSwapChain(this);
+    }
 
-const VkInstance Core::Vulkan::VulkanApplication::GetInstance() const
-{
-    return m_VulkanInstance->GetInstance();
-}
+    const VkPhysicalDevice VulkanApplication::GetPhysicalDevice() const
+    {
+        return m_VulkanPhysicalDevice->GetPhysicalDevice();
+    }
 
-const Core::Vulkan::VulkanValidation* Core::Vulkan::VulkanApplication::GetValidation() const
-{
-    return m_VulkanValidation;
-}
+    const VkInstance VulkanApplication::GetInstance() const
+    {
+        return m_VulkanInstance->GetInstance();
+    }
 
-const VkDevice Core::Vulkan::VulkanApplication::GetDevice() const
-{
-    return m_VulkanDevice->GetDevice();
-}
+    const VulkanValidation* VulkanApplication::GetValidation() const
+    {
+        return m_VulkanValidation;
+    }
 
-const Core::Window* Core::Vulkan::VulkanApplication::GetWindow() const
-{
-    return m_Window;
-}
+    const VkDevice VulkanApplication::GetDevice() const
+    {
+        return m_VulkanDevice->GetDevice();
+    }
 
-const VkSurfaceKHR Core::Vulkan::VulkanApplication::GetSurface() const
-{
-    return m_VulkanSurface->GetSurface();
+    const Window* VulkanApplication::GetWindow() const
+    {
+        return m_Window;
+    }
+
+    const VkSurfaceKHR VulkanApplication::GetSurface() const
+    {
+        return m_VulkanSurface->GetSurface();
+    }
 }

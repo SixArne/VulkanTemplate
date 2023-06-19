@@ -19,6 +19,8 @@ namespace Core::Vulkan
     {
         Init();
         CreateImageViews();
+
+        L_DEBUG("Vulkan Swapchain created")
     }
 
     VulkanSwapChain::~VulkanSwapChain()

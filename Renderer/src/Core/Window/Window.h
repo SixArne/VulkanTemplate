@@ -1,10 +1,9 @@
 #ifndef VULKAN_RENDERER_WINDOW_H
 #define VULKAN_RENDERER_WINDOW_H
 
+#include <GLFW/glfw3.h>
+#include <stdint.h>
 #include <string>
-#include <memory>
-
-struct GLFWwindow;
 
 struct WindowData
 {
@@ -29,14 +28,17 @@ namespace Core
         ~Window();
 
         void Create();
-        bool IsRunning() const;
-        Dimensions GetDimensions() const;
+        bool IsRunning() const { return !glfwWindowShouldClose(m_pWindow); };
+        Dimensions GetDimensions() const { return { m_Width, m_Height }; };
         GLFWwindow* GetGLFWWindow() const;
         void Update(float deltaTime);
 
     private:
-        class WindowImpl;
-        std::unique_ptr<WindowImpl> m_Impl;
+        GLFWwindow* m_pWindow;
+
+        uint16_t m_Width;
+        uint16_t m_Height;
+        std::string m_Title;
     };
 }
 
