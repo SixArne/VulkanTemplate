@@ -1,8 +1,9 @@
 #include "Compiler.h"
 
 #include <array>
+#include <filesystem>
+#include <future>
 
-// Cause fuck the maintainers of this library.
 #pragma warning(push)
 #pragma warning(disable: 4458)
 #pragma warning(disable: 4457)
@@ -14,14 +15,41 @@
 
 namespace Core::Vulkan::Compiler
 {
-    bool ShaderCompiler::SPIR_V_CompileShaderByFile(const std::string& filename, EShLanguage shaderType, SPIR_V& spirvCode)
+	ShaderCompiler::ShaderCompiler()
+        : m_LUTExtensions_ShaderType
+        {
+			{ ".vert", EShLanguage::EShLangVertex },
+			{ ".frag", EShLanguage::EShLangFragment },
+			{ ".geom", EShLanguage::EShLangGeometry },
+			{ ".tesc", EShLanguage::EShLangTessControl },
+			{ ".tese", EShLanguage::EShLangTessEvaluation },
+			{ ".comp", EShLanguage::EShLangCompute },
+            { ".spv" , EShLanguage::EShLangCount }
+        },
+        m_LUTShaderType_Name
+        {
+			{ EShLanguage::EShLangVertex,           "vertex" },
+			{ EShLanguage::EShLangFragment,         "fragment" },
+			{ EShLanguage::EShLangGeometry,         "geometry" },
+			{ EShLanguage::EShLangTessControl,      "tessellation" },
+			{ EShLanguage::EShLangTessEvaluation,   "tessellation-evaluation" },
+			{ EShLanguage::EShLangCompute,          "compute" },
+            { EShLanguage::EShLangCount,            "spirv"}
+        },
+        m_DefaultResource{ GetDefaultResource() }
+	{}
+
+    ShaderCompiler::~ShaderCompiler()
+    {}
+
+    bool ShaderCompiler::SPIR_V_CompileShaderByFile(ShaderFileByteCode& shaderFile)
     {
-        auto shaderCode = ShaderLoader::ReadShaderFile(filename);
+        auto shaderCode = ShaderLoader::ReadShaderFile(shaderFile.filename.string());
         if (!shaderCode.empty())
         {
             glslang::InitializeProcess();
 
-            glslang::TShader shader(shaderType);
+            glslang::TShader shader(shaderFile.shaderType);
 
             std::array<const char*, 1> shaderStrings{};
             shaderStrings[0] = shaderCode.c_str();
@@ -35,15 +63,13 @@ namespace Core::Vulkan::Compiler
             shader.setEnvClient(glslang::EShClientVulkan, vulkanClientVersion);
             shader.setEntryPoint("main");
 
-            TBuiltInResource resources{};
-            resources = InitResources();
-
             const int defaultVersion = 100;
 
             EShMessages messages = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
 
+            auto resource = GetDefaultResource();
 
-            if (!shader.parse(&resources, defaultVersion, false, messages)) {
+            if (!shader.parse(&resource, defaultVersion, false, messages)) {
                 puts(shader.getInfoLog());
                 puts(shader.getInfoDebugLog());
                 return false;  // shader failed to compile
@@ -58,7 +84,7 @@ namespace Core::Vulkan::Compiler
                 return false;  // program failed to link
             }
 
-            glslang::GlslangToSpv(*program.getIntermediate(shaderType), spirvCode);
+            glslang::GlslangToSpv(*program.getIntermediate(shaderFile.shaderType), shaderFile.code);
 
             return true;
         }
@@ -66,7 +92,7 @@ namespace Core::Vulkan::Compiler
         return false;
     }
 
-    TBuiltInResource ShaderCompiler::InitResources()
+    TBuiltInResource ShaderCompiler::GetDefaultResource()
     {
         TBuiltInResource Resources{};
 
@@ -176,8 +202,34 @@ namespace Core::Vulkan::Compiler
         return Resources;
     }
 
-    bool ShaderCompiler::SPIR_V_CompileShadersByDirectory(const std::string& directory, EShLanguage shaderType, std::vector<SPIR_V>& spirvCode)
+    bool ShaderCompiler::SPIR_V_CompileShadersByDirectory(const std::string& directory)
     {
+        std::vector<ShaderFileByteCode> shaderFiles = FindAllShadersInDirectory(directory, 0);
+
+        for (auto& shaderFile : shaderFiles)
+        {
+            SPIR_V_CompileShaderByFile(shaderFile);
+
+            // CompileShaderByFile should set new name and path
+            auto output = std::format("{}/{}-{}.spv", shaderFile.filename.parent_path().string(), shaderFile.filename.stem().string(), GetShaderTypeName(shaderFile.shaderType));
+            SPIR_V_WriteToFile(output, shaderFile.code);
+        }
+
+       /* std::vector<std::future<bool>> futures{};
+        for (auto& shaderFile : shaderFiles)
+        {
+            futures.emplace_back(std::async(std::launch::async, [&shaderFile]()
+                {
+                    return SPIR_V_CompileShaderByFile(shaderFile);
+                }
+            ));
+        }
+
+        for (auto& future : futures)
+        {
+            future.wait();
+        }*/
+
         return true;
     }
 
@@ -195,11 +247,67 @@ namespace Core::Vulkan::Compiler
         }
         else
         {
-            L_DEBUG("Failed to open and write SPIR-V file: {}", filename);
+            L_ERROR("Failed to open and write SPIR-V file: {}", filename);
 
             return false;
         }
 	}
+
+	std::vector<ShaderFileByteCode> ShaderCompiler::FindAllShadersInDirectory(const std::string& directory, int layers /*= 0*/)
+	{
+        std::vector<ShaderFileByteCode> shaderFiles{};
+
+		if (std::filesystem::exists(directory))
+		{
+			for (const auto& entry : std::filesystem::recursive_directory_iterator(directory))
+			{
+				if (entry.is_regular_file())
+				{
+					if (auto extension = entry.path().extension(); !extension.empty())
+					{
+						auto stringExtension = extension.string();
+
+						if (auto it = m_LUTExtensions_ShaderType.find(stringExtension); it != m_LUTExtensions_ShaderType.end())
+						{
+							auto shaderType = it->second;
+
+                            if (shaderType != EShLangCount)
+                            {
+                                ShaderFileByteCode shaderFile{};
+                                shaderFile.filename = entry.path();
+                                shaderFile.shaderType = shaderType;
+
+                                shaderFiles.emplace_back(shaderFile);
+                            }
+						}
+                        else
+                        {
+                            std::string fileformats
+                            {
+                                ".vert, .frag, .geom, .tesc, .tese, .comp"
+                            };
+
+                            L_ERROR("{} UNKNOWN SHADER FILE", entry.path())
+                            L_ERROR("Only following extensions are valid {}", fileformats)
+                        }
+					}
+				}
+			}
+		}
+
+        return shaderFiles;
+	}
+
+	std::string ShaderCompiler::GetShaderTypeName(EShLanguage shaderType)
+	{
+		if (auto it = m_LUTShaderType_Name.find(shaderType); it != m_LUTShaderType_Name.end())
+		{
+			return it->second;
+		}
+
+        return std::string{};
+	}
+
 
     std::string ShaderLoader::ReadShaderFile(const std::string& filename)
     {
