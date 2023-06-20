@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/Renderer/Debug/Renderer",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Renderer",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "internalConsole",
             "preLaunchTask": "Debug"
@@ -20,7 +20,7 @@
             "program": "${workspaceFolder}/build/Renderer/Release/Renderer",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Renderer",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "internalConsole",
             "preLaunchTask": "Release"

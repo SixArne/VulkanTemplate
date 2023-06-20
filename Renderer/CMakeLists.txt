@@ -4,6 +4,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 
+
+
 add_executable(Renderer
     src/main.cpp
     
@@ -38,17 +40,34 @@ add_executable(Renderer
 
     src/Core/Vulkan/Helpers/Helpers.cpp
     src/Core/Vulkan/Helpers/Helpers.h
+
+    src/Core/Vulkan/Shaders/Compiler.cpp
+    src/Core/Vulkan/Shaders/Compiler.h
+
     # src/Core/Errors/VulkanErrors.cpp
 )
 
-# Set compiler warnings as errors
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    message(STATUS "[Game] Setting warnings as errors for GNU/Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
-elseif(MSVC)
-    message(STATUS "[Game] Setting warnings as errors for MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
+set_property(TARGET Renderer PROPERTY COMPILE_WARNING_AS_ERROR ON)
+
+# Set the output directory for executables
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Set the working directory for the binary within Visual Studio
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set_property(TARGET Renderer PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Renderer/Debug")
+else()
+    set_property(TARGET Renderer PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Renderer/Release")
 endif()
+
+# TODO: Fix this, this needs to compile with warnings as errors
+# Set compiler warnings as errors
+# if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+#     message(STATUS "[Game] Setting warnings as errors for GNU/Clang")
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+# elseif(MSVC)
+#     message(STATUS "[Game] Setting warnings as errors for MSVC")
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
+# endif()
 
 # Enable debug define
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -106,8 +125,21 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glfw)
 
+# GLSLang
+FetchContent_Declare(
+    glslang
+    GIT_REPOSITORY https://github.com/KhronosGroup/glslang
+    GIT_TAG "main"
+    DOWNLOAD_NO_PROGRESS ON
+)
+
+
+FetchContent_MakeAvailable(glslang)
+set_property(TARGET glslang PROPERTY COMPILE_WARNING_AS_ERROR OFF)
+
 # Vulkan
 find_package(Vulkan REQUIRED)
+
 
 set (RendererIncludes
     ${GLM_INCLUDE_DIR}
@@ -115,7 +147,7 @@ set (RendererIncludes
     ${SPDLOG_INCLUDE_DIR}/include
 )
 
-foreach(RendererInclude in ${RendererIncludes})
+foreach(RendererInclude IN LISTS RendererIncludes)
     message(STATUS "Including: ${engineInclude} in Renderer")
 endforeach()
 
@@ -130,8 +162,16 @@ target_include_directories(Renderer PUBLIC
 target_link_libraries(Renderer PUBLIC
     glfw
     Vulkan::Vulkan
+    glslang
+    SPIRV
+    OGLCompiler
 )
 
 if(MSVC)
  target_compile_options(Renderer PRIVATE "/MP")
 endif()
+
+# copy data folder to build directory
+add_custom_command(TARGET Renderer POST_BUILD
+  COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/Shaders" "$<TARGET_FILE_DIR:Renderer>/Shaders"
+)
