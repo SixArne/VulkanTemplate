@@ -88,7 +88,9 @@
         "stack": "cpp",
         "unordered_set": "cpp",
         "xtree": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "*.cppm": "cpp",
+        "*.ixx": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -4,8 +4,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 
-
-
 add_executable(Renderer
     src/main.cpp
     
